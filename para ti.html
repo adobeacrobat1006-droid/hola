@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>UNAS PALABRAS PARA TI A</title>
+  <style>
+    :root{
+      --bg:#0b0b14; /* noche */
+      --paper:#fffaf0; /* hoja cálida */
+      --ink:#2c2c2c;
+      --accent:#ff2d55; /* corazón */
+      --rose:#d10a2b; /* rosas */
+      --shadow: 0 20px 60px rgba(0,0,0,.35);
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%;margin:0}
+    body{
+      background: radial-gradient(1200px 800px at 50% 45%, rgba(255,45,85,.08), transparent 60%) , var(--bg);
+      color: var(--ink);
+      overflow:hidden;
+      font-family: 'Segoe UI', system-ui, -apple-system, Roboto, Arial, sans-serif;
+    }
+
+    /* Fondo corazón latiendo */
+    .heart-bg{
+      position:fixed; inset:0; z-index:-1; display:grid; place-items:center; pointer-events:none;
+      opacity:.55;
+      filter: drop-shadow(0 0 30px rgba(255,45,85,.35));
+    }
+    .heart{
+      width:min(70vmin,720px); height:auto;
+      animation: beat 1.5s ease-in-out infinite;
+      transform-origin:center;
+    }
+    @keyframes beat{
+      0%, 100%{transform:scale(1)}
+      20%{transform:scale(1.06)}
+      40%{transform:scale(1)}
+      60%{transform:scale(1.06)}
+      80%{transform:scale(1)}
+    }
+
+    /* Hoja (carta) */
+    .paper{
+      position:absolute; top:50%; left:50%; transform:translate(-50%,-50%) rotate(-1deg);
+      width:min(780px, 92vw); max-height:76vh; background:var(--paper);
+      border-radius:18px; box-shadow: var(--shadow);
+      padding:28px 28px 36px; overflow:auto; line-height:1.6;
+      border:1px solid rgba(0,0,0,.08);
+      animation: floatIn 1.3s cubic-bezier(.2,.8,.2,1) both;
+    }
+    @keyframes floatIn{from{opacity:0; transform:translate(-50%,-40%) rotate(-3deg)} to{opacity:1; transform:translate(-50%,-50%) rotate(-1deg)}}
+
+    .paper header{display:flex; align-items:center; gap:12px; margin-bottom:10px}
+    .seal{
+      width:34px; height:34px; border-radius:50%;
+      background: radial-gradient(circle at 30% 30%, #ff9db0, #ff2d55);
+      box-shadow: inset 0 2px 8px rgba(0,0,0,.25), 0 6px 18px rgba(255,45,85,.25);
+    }
+    h1{margin:0; font-size:clamp(20px, 4vw, 30px); color:#1a1a1a}
+    p{margin:.5rem 0}
+    .sig{margin-top:10px; font-style:italic; opacity:.9}
+
+    .controls{
+      position:fixed; right:16px; bottom:16px; display:flex; flex-direction:column; gap:10px; z-index:5;
+    }
+    .btn{
+      background:#ffffff18; border:1px solid #ffffff30; color:#fff; padding:10px 14px; border-radius:14px;
+      backdrop-filter: blur(6px); cursor:pointer; box-shadow: 0 10px 20px rgba(0,0,0,.25);
+      font-weight:600; letter-spacing:.2px; transition: transform .08s ease, background .2s;
+    }
+    .btn:hover{background:#ffffff26}
+    .btn:active{transform:scale(.98)}
+
+    /* Indicaciones sutiles */
+    .hint{position:fixed; left:50%; bottom:22px; transform:translateX(-50%); color:#ffffffcc; font-size:14px; letter-spacing:.2px}
+
+    /* Canvas de fuegos/rosas cubre todo */
+    canvas#sky{position:fixed; inset:0; z-index:0}
+
+    /* Rosa flotante extra (emoji) */
+    .rose{position:fixed; font-size:28px; filter: drop-shadow(0 6px 8px rgba(0,0,0,.35)); pointer-events:none}
+
+    /* Scrollbar estética para la carta */
+    .paper::-webkit-scrollbar{width:10px}
+    .paper::-webkit-scrollbar-thumb{background:#e9ded0; border-radius:20px}
+  </style>
+</head>
+<body>
+  <!-- Fondo corazón -->
+  <div class="heart-bg" aria-hidden="true">
+    <svg class="heart" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M471.7 73.6c-54.5-46.4-136-38.3-186.4 13.8L256 117.3l-29.3-29.9C176.3 36 94.8 27.2 40.3 73.6-23.3 127.7-12 226.5 43 281.7l187.5 187.5a36 36 0 0 0 50.9 0L469 281.7c55-55.2 66.3-154- - -"/>
+    </svg>
+  </div>
+
+  <!-- Corazón SVG path válido (el de arriba lo reemplazamos con uno correcto a continuación) -->
+  <svg style="position:fixed; inset:0; width:0; height:0;" aria-hidden="true">
+    <symbol id="heart-shape" viewBox="0 0 32 29.6">
+      <path fill="currentColor" d="M23.6,0c-2.7,0-5.1,1.2-6.6,3.2C15.4,1.2,13,0,10.4,0C4.7,0,0,4.7,0,10.4c0,9,9.9,12.6,16.9,19.2 c7-6.6,16.9-10.2,16.9-19.2C33.8,4.7,29.1,0,23.6,0z"/>
+    </symbol>
+  </svg>
+  <div class="heart-bg" aria-hidden="true" style="opacity:.3">
+    <div style="color:var(--accent); transform:translateY(-2vh); animation: beat 1.5s ease-in-out infinite;">
+      <svg width="66vmin" viewBox="0 0 32 29.6" class="heart"><use href="#heart-shape"/></svg>
+    </div>
+  </div>
+
+  <!-- Carta -->
+  <article class="paper" role="dialog" aria-label="Carta de agradecimiento">
+    <header>
+      <div class="seal" aria-hidden="true"></div>
+      <h1>UNAS PALABRAS PARA TI ALICE</h1>
+    </header>
+    <p>
+      A veces la vida planea encuentros sin avisar… y de esa casualidad nació algo muy bonito: conocerte.
+    </p>
+    <p>
+      Eres una chica tierna y bondadosa, de esas que iluminan los días con su forma de ser. Gracias por cada risa, 
+      cada mensaje, y por regalarme confianza. Toda tu eres un detalle que guardo con cariño.
+    </p>
+    <p>
+      Hoy quiero decirte, en esta pequeña hoja viajera, lo afortunado que me siento de haberte encontrado. 
+      Que nunca falten motivos para sonreír, y que lo que compartimos siga creciendo con la misma dulzura con la que llegó.
+    </p>
+    <p class="sig">Con mucho cariño,</p>
+    <p class="sig">— De corazón 💖</p>
+  </article>
+
+  <!-- Canvas para fuegos artificiales que se transforman en rosas -->
+  <canvas id="sky"></canvas>
+
+  <!-- Controles -->
+  <div class="controls">
+    <button class="btn" id="launch">🎆 Lanzar fuegos</button>
+    <button class="btn" id="roses">🌹 Convertir en rosas</button>
+    <button class="btn" id="music">🔊 Música</button>
+  </div>
+  <div class="hint">Tip: haz clic o toca el cielo para más fuegos artificiales</div>
+
+  <!-- Música (reemplaza src con un enlace legal a la canción: Andrey Serrano - “Me gustas tanto”) -->
+  <audio id="song" preload="none" src="Me Gustas Tanto-Andrey Serrano" loop></audio>
+
+  <script>
+    /* ====== Música ====== */
+    const song = document.getElementById('song');
+    const musicBtn = document.getElementById('music');
+    let musicReady = false;
+    musicBtn.addEventListener('click', async () => {
+      if(!song.src){
+        const url = prompt('Pega aquí un enlace de audio válido (MP3/OGG) de "Me Gustas Tanto-Andrey Serrano" con derechos para reproducir.');
+        if(url){ song.src = url; musicReady = true; }
+      }
+      try{
+        if(song.paused){ await song.play(); musicBtn.textContent='⏸️ Pausar música'; }
+        else{ song.pause(); musicBtn.textContent='🔊 Música'; }
+      }catch(e){ alert('El navegador bloqueó la reproducción automática. Intenta de nuevo.'); }
+    });
+
+    /* ====== Partículas: fuegos artificiales & rosas ====== */
+    const canvas = document.getElementById('sky');
+    const ctx = canvas.getContext('2d');
+    let W = canvas.width = window.innerWidth;
+    let H = canvas.height = window.innerHeight;
+    window.addEventListener('resize',()=>{ W=canvas.width=innerWidth; H=canvas.height=innerHeight; });
+
+    const particles = [];
+    const gravity = 0.06; // caída suave
+    const colors = ['#fff','#ffe3e3','#ffd1d9','#ffd3a5'];
+    let asRoses = false;
+
+    class Particle{
+      constructor(x,y, vx,vy, life, color){
+        this.x=x; this.y=y; this.vx=vx; this.vy=vy; this.life=life; this.max=life; this.color=color; this.size=2+Math.random()*2;
+        this.roseSpin = Math.random()*Math.PI*2;
+      }
+      step(){
+        this.life--; this.x+=this.vx; this.y+=this.vy; this.vy+=gravity; this.vx*=0.99; this.vy*=0.99;
+      }
+      draw(){
+        const t = this.life/this.max;
+        if(asRoses){
+          ctx.save();
+          ctx.translate(this.x, this.y);
+          ctx.rotate(this.roseSpin += 0.02);
+          ctx.globalAlpha = Math.max(0, t);
+          ctx.font = `${12+this.size*3}px serif`;
+          ctx.fillText('🌹', 0, 0);
+          ctx.restore();
+        }else{
+          ctx.save();
+          ctx.globalCompositeOperation = 'screen';
+          const g = ctx.createRadialGradient(this.x, this.y, 0, this.x, this.y, 8+this.size*2);
+          g.addColorStop(0, this.color);
+          g.addColorStop(1, 'transparent');
+          ctx.fillStyle = g;
+          ctx.beginPath();
+          ctx.arc(this.x, this.y, 8+this.size*2, 0, Math.PI*2);
+          ctx.fill();
+          ctx.restore();
+        }
+      }
+    }
+
+    function burst(x,y, count=120){
+      for(let i=0;i<count;i++){
+        const a = Math.random()*Math.PI*2;
+        const s = Math.random()*6+2;
+        const vx = Math.cos(a)*s;
+        const vy = Math.sin(a)*s*0.9 - (Math.random()*1.8+0.8);
+        const life = 60 + Math.random()*40;
+        const color = colors[Math.floor(Math.random()*colors.length)];
+        particles.push(new Particle(x,y,vx,vy,life,color));
+      }
+    }
+
+    function launcher(){
+      const x = Math.random()*W*0.8 + W*0.1;
+      const y = H*0.6 + Math.random()*H*0.2;
+      burst(x,y);
+    }
+
+    const launchBtn = document.getElementById('launch');
+    const rosesBtn = document.getElementById('roses');
+    launchBtn.addEventListener('click',()=>{ asRoses=false; launcher(); });
+    rosesBtn.addEventListener('click',()=>{ asRoses=true; });
+    canvas.addEventListener('pointerdown', (e)=>{
+      const rect = canvas.getBoundingClientRect();
+      burst(e.clientX - rect.left, e.clientY - rect.top);
+    });
+
+    // Goteo de rosas decorativas
+    function spawnFloatingRose(){
+      const span = document.createElement('span');
+      span.className='rose'; span.textContent='🌹';
+      span.style.left = Math.random()*100 + 'vw';
+      span.style.top = '-40px';
+      document.body.appendChild(span);
+      const duration = 7000 + Math.random()*5000;
+      const start = performance.now();
+      const drift = (Math.random()*2-1)*40;
+      function step(t){
+        const p = Math.min(1, (t-start)/duration);
+        const y = -40 + p*(H+80);
+        const x = parseFloat(span.style.left);
+        span.style.transform = `translate(${Math.sin(p*6)*drift}px, ${y}px) rotate(${p*720}deg)`;
+        span.style.opacity = String(1-Math.pow(p,1.4));
+        if(p<1) requestAnimationFrame(step); else span.remove();
+      }
+      requestAnimationFrame(step);
+    }
+    setInterval(()=>{ if(asRoses && Math.random()<0.7) spawnFloatingRose(); }, 900);
+
+    // Loop
+    function loop(){
+      ctx.clearRect(0,0,W,H);
+      for(let i=particles.length-1;i>=0;i--){
+        const p = particles[i]; p.step(); p.draw(); if(p.life<=0) particles.splice(i,1);
+      }
+      requestAnimationFrame(loop);
+    }
+    loop();
+
+    // Pequeña demo automática
+    setTimeout(()=>{ launcher(); }, 1200);
+    setTimeout(()=>{ asRoses=true; }, 3400);
+  </script>
+</body>
+</html>
